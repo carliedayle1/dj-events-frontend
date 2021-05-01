@@ -7,7 +7,15 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css";
 function MyApp({ Component, pageProps }) {
   return (
     <AuthProvider>
-      <ToastContainer />
+      <ToastContainer
+        position="bottom-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        draggable
+      />
       <Component {...pageProps} />
     </AuthProvider>
   );
