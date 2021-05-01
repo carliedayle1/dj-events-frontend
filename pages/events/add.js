@@ -6,6 +6,7 @@ import Link from "next/link";
 import Layout from "@/components/Layout";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Form.module.css";
+import Loader from "react-loader-spinner";
 
 export default function AddEventPage({ token }) {
   const [values, setValues] = useState({
@@ -17,6 +18,8 @@ export default function AddEventPage({ token }) {
     time: "",
     description: "",
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -32,7 +35,7 @@ export default function AddEventPage({ token }) {
       toast.error("Please fill in all fields");
       return;
     }
-
+    setIsLoading(true);
     const res = await fetch(`${API_URL}/events`, {
       method: "POST",
       headers: {
@@ -53,6 +56,8 @@ export default function AddEventPage({ token }) {
       router.push(`/events/${evt.slug}`);
       toast.success("Event added!");
     }
+
+    setIsLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -139,7 +144,13 @@ export default function AddEventPage({ token }) {
           ></textarea>
         </div>
 
-        <input type="submit" value="Add Event" className="btn" />
+        {isLoading ? (
+          <div className="btn-icon">
+            <Loader type="Bars" color="#00BFFF" height={30} width={30} />
+          </div>
+        ) : (
+          <input type="submit" value="Add event" className="btn" />
+        )}
       </form>
     </Layout>
   );

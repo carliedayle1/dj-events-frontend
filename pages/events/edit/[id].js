@@ -11,6 +11,7 @@ import Modal from "@/components/Modal";
 import ImageUpload from "@/components/ImageUpload";
 import { API_URL } from "@/config/index";
 import styles from "@/styles/Form.module.css";
+import Loader from "react-loader-spinner";
 
 export default function EditEventPage({ evt, token }) {
   const [values, setValues] = useState({
@@ -26,6 +27,7 @@ export default function EditEventPage({ evt, token }) {
     evt.image ? evt.image.formats.thumbnail.url : null
   );
   const [showModal, setShowModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
@@ -40,7 +42,7 @@ export default function EditEventPage({ evt, token }) {
     if (hasEmptyFields) {
       toast.error("Please fill in all fields");
     }
-
+    setIsLoading(true);
     const res = await fetch(`${API_URL}/events/${evt.id}`, {
       method: "PUT",
       headers: {
@@ -53,6 +55,7 @@ export default function EditEventPage({ evt, token }) {
     if (!res.ok) {
       if (res.status === 403 || res.status === 401) {
         toast.error("Unauthorized");
+        setIsLoading(false);
         return;
       }
       toast.error("Something Went Wrong");
@@ -60,6 +63,7 @@ export default function EditEventPage({ evt, token }) {
       const evt = await res.json();
       router.push(`/events/${evt.slug}`);
     }
+    setIsLoading(false);
   };
 
   const handleInputChange = (e) => {
@@ -153,7 +157,13 @@ export default function EditEventPage({ evt, token }) {
           ></textarea>
         </div>
 
-        <input type="submit" value="Update Event" className="btn" />
+        {isLoading ? (
+          <div className="btn-icon">
+            <Loader type="Bars" color="#00BFFF" height={30} width={30} />
+          </div>
+        ) : (
+          <input type="submit" value="Update Event" className="btn" />
+        )}
       </form>
 
       <h2>Event Image</h2>
